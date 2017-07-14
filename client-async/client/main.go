@@ -20,8 +20,9 @@ package main
 
 import (
 	"log"
-	// "os"
+    // "os"
 
+    // "strconv"
 	"golang.org/x/net/context"
 	"google.golang.org/grpc"
 	pb "google.golang.org/grpc/examples/helloworld/helloworld"
@@ -30,11 +31,31 @@ import (
 const (
 	address     = "localhost:50051"
 	defaultName = "world"
+    numOfChan         = 6
 
 )
 
-var cnt int = 0
+func main() {
+	// Set up a connection to the server.
+	conn, err := grpc.Dial(address, grpc.WithInsecure())
+	if err != nil {
+		log.Fatalf("did not connect: %v", err)
+	}
+	defer conn.Close()
+	c := pb.NewGreeterClient(conn)
 
+	// Contact the server and print out its response.
+    /* name := defaultName
+    if len(os.Args) > 1 {
+        name = os.Args[1]
+    } */
+
+    // callMultipleAsyncRPC(c)
+    callMultipleAsyncRPCWithRet(c)
+    for {}
+}
+
+var cnt int = 0
 func callMultipleAsyncRPC(c pb.GreeterClient) {
     log.Print("Calling RPC without getting return value but with goroutine")
     for i := 0; i < 5; i++ {
@@ -49,31 +70,38 @@ func callMultipleAsyncRPC(c pb.GreeterClient) {
     log.Print("Bless with goroutine")
 }
 
-func main() {
-	// Set up a connection to the server.
-	conn, err := grpc.Dial(address, grpc.WithInsecure())
-	if err != nil {
-		log.Fatalf("did not connect: %v", err)
-	}
-	defer conn.Close()
-	c := pb.NewGreeterClient(conn)
 
-	// Contact the server and print out its response.
-	/* name := defaultName
-	if len(os.Args) > 1 {
-		name = os.Args[1]
-	} */
-    /* log.Printf("Calling RPC without getting return value")
-	c.SayHello(context.Background(), &pb.HelloRequest{Name: name})
-    log.Printf("Not using return values from Remote Procedure call") */
-    callMultipleAsyncRPC(c)
+func callMultipleAsyncRPCWithRet(c pb.GreeterClient) {
+    log.Print("Calling RPC with getting return value but and goroutine")
+    var channels [numOfChan]chan string
+    hello_strings := [numOfChan]string{"안녕하세요", "hej!", "hello", "おはようございます", "你好！","السلام عليكم" }
 
-    // log.Printf("Greeting: %s", r.Message)
-
-    /* r, err = c.SayHelloAgain(context.Background(), &pb.HelloRequest{Name: name})
-    if err != nil {
-        log.Fatalf("could not greet: %v", err)
+    for i := range channels {
+        channels[i] = make(chan string)
+        log.Print(hello_strings[i])
     }
-    log.Printf("Greeting: %s", r.Message) */
-    for {}
+
+    for i := 0; i < numOfChan; i++ {
+        go func(hello string, ch chan string) {
+            log.Print("Inside goroutine: Start c.SyaHello", hello)
+            r, err := c.SayHello(context.Background(), &pb.HelloRequest{Name: hello})
+            if err != nil {
+                log.Fatalf("could not greet: %v", err)
+            }
+
+            ch <- hello
+            log.Print("Inside goroutine: Exit c.SayHello", r.Message)
+        }(hello_strings[i], channels[i])
+    }
+
+    var res_hellos [numOfChan]string
+
+    for i := 0; i < numOfChan; i++ {
+        log.Print("Let me wait for goroutines")
+        res_hellos[i] = <-channels[i]
+        log.Print("Got: ", res_hellos[i])
+    }
+
+
+    log.Print("Bless with goroutine")
 }
