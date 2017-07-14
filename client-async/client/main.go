@@ -56,6 +56,7 @@ func main() {
 }
 
 var cnt int = 0
+
 func callMultipleAsyncRPC(c pb.GreeterClient) {
     log.Print("Calling RPC without getting return value but with goroutine")
     for i := 0; i < 5; i++ {
@@ -101,7 +102,6 @@ func callMultipleAsyncRPCWithRet(c pb.GreeterClient) {
         res_hellos[i] = <-channels[i]
         log.Print("Got: ", res_hellos[i])
     }
-
 
     log.Print("Bless with goroutine")
 }
