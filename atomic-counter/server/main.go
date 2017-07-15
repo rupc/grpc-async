@@ -62,20 +62,9 @@ func (s *server) FromClient(ctx context.Context, in *pb.HelloRequest) (*pb.Hello
 }
 
 func (s *server) IncreaseCounter(ctx context.Context, in *pb.HelloRequest) (*pb.HelloReply, error) {
-    log.Print("IncreaseCounter received. Increase atomic_counter by 1"tomic_counter rk 2rk ehlf EoRkwl angks fnvmdptj eorl
-    3. zmffkdldjsxmrk rpc IncreaseCounter, ops) fmf ghcnf
-    zmffkdldjsxmsms 3rodml dycjddmf qlehdrlwjrdmf qhsoa
-
-
-    4. IncreaseCountersms atomic_counter fmf 1 wmdrk tlzla
-
-6   4gksqjs ej . IncreaseCountersms atomic_counter fmf 1 wmdrk tlzla
-atomic.AddUint64(&ops, 1): 2rk ehla
-7. FromClient gkatnsms atomic_counterdml rkqtdl 2rk ehls rjtdmf qhrh fnvmdptj QKwuskdha
-8. FromClient gkatnsms atomic_counterdml rkqtdl 2rk ehls rjtdmf qhrh fnvmdptj QKwuskdha
-    return &pb.òrmfjrhsktj, dmdekq aptlwlfmf zmffkdldjsxmdprp qhsoa
-    9. z
-tntzmffkdldjsxxmsms aoscjdmadml dml dycjddmf qhsos rhfnxlsdprp gkfekdehls cosjfdmf xhdgo dmdekqrkqtdmf whtkgkf tn dlTdma
+    log.Print("IncreaseCounter received. Increase atomic_counter by 1")
+    return &pb.HelloReply{Message: "Incremented atomic_counter by 1"}, nil
+}
 
 func main() {
 	lis, err := net.Listen("tcp", port)
