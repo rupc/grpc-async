@@ -63,6 +63,7 @@ func (s *server) FromClient(ctx context.Context, in *pb.HelloRequest) (*pb.Hello
 
 func (s *server) IncreaseCounter(ctx context.Context, in *pb.HelloRequest) (*pb.HelloReply, error) {
     log.Print("IncreaseCounter received. Increase atomic_counter by 1")
+    atomic.AddUint64(&ops, 1)
     return &pb.HelloReply{Message: "Incremented atomic_counter by 1"}, nil
 }
 
